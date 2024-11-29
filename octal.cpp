@@ -3,6 +3,7 @@
 #include <string>
 #include <sstream>
 #include <fstream>
+#include <algorithm>
 
 class octal {
 public:
@@ -92,7 +93,9 @@ public:
                 std::cout << lines.size() << "\n";
             }
             else if (line == command_preview) {
+                std::cout << "\n";
                 printBuffer(lines);
+                std::cout << "\n";
             }
             // Otherwise, add or replace the line at the cursor position
             else {
@@ -141,9 +144,11 @@ private:
     }
 
     void printBuffer(std::vector<std::string> lines) {
-        for (const auto& l : lines) {
-            std::cout << l << "\n";
-        }
+        int index = 0;
+        std::for_each(lines.begin(), lines.end(), [&index](const std::string& l) {
+            std::cout << index + 1 << " | " << l << "\n";
+            ++index;  // Increment index manually
+        });
     }
 
     void loadFromFile(const std::string& inputFile, std::vector<std::string>& lines) {
@@ -159,6 +164,7 @@ private:
             lines.push_back(line);  // Add each line to the buffer
         }
         inFile.close();
+        cursor = lines.size();
         std::cout << "\n" << inputFile << ":\n";
         printBuffer(lines);
         std::cout << "\n";
