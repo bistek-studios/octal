@@ -12,12 +12,12 @@ public:
         std::string line;
         std::vector<std::string> lines;
 
+        std::cout << "octal v1.1 Type ':h' for help.\n";
+
         // Load the input file if specified
         if (!inputFile.empty()) {
             loadFromFile(inputFile, lines);
         }
-
-        std::cout << "octal v1.1 Type ':h' for help.\n";
 
         while (running) {
             std::cout << "line " << cursor + 1 << " > ";
@@ -30,6 +30,8 @@ public:
             // Check if user wants to quit and save to file
             else if (line == command_save_exit) {
                 saveToFile(outputFile, lines);  // Save buffer to file
+                std::cout << "\nYour text:\n";
+                printBuffer(lines);
                 running = false;  // Exit after saving
             } 
             // Check if user wants help
@@ -106,8 +108,6 @@ public:
         }
 
         // Print the content of the editor before quitting
-        std::cout << "\nYour text:\n";
-        printBuffer(lines);
     }
 
 private:
@@ -159,7 +159,9 @@ private:
             lines.push_back(line);  // Add each line to the buffer
         }
         inFile.close();
-        std::cout << "Loaded file: " << inputFile << " into the editor.\n";
+        std::cout << "\n" << inputFile << ":\n";
+        printBuffer(lines);
+        std::cout << "\n";
     }
 };
 
