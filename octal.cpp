@@ -6,13 +6,18 @@
 
 class octal {
 public:
-    void start(const std::string& outputFil) {
+    void start(const std::string& outputFil, const std::string& inputFile) {
         outputFile = outputFil;
         running = true;
         std::string line;
         std::vector<std::string> lines;
 
-        std::cout << "octal v1.0 Type ':h' for help.\n";
+        // Load the input file if specified
+        if (!inputFile.empty()) {
+            loadFromFile(inputFile, lines);
+        }
+
+        std::cout << "octal v1.1 Type ':h' for help.\n";
 
         while (running) {
             std::cout << "line " << cursor + 1 << " > ";
@@ -140,20 +145,42 @@ private:
             std::cout << l << "\n";
         }
     }
+
+    void loadFromFile(const std::string& inputFile, std::vector<std::string>& lines) {
+        std::ifstream inFile(inputFile);
+        if (!inFile) {
+            std::cout << "Error opening file: " << inputFile << std::endl;
+            return;
+        }
+
+        // Read the file line by line
+        std::string line;
+        while (std::getline(inFile, line)) {
+            lines.push_back(line);  // Add each line to the buffer
+        }
+        inFile.close();
+        std::cout << "Loaded file: " << inputFile << " into the editor.\n";
+    }
 };
 
 int main(int argc, char* argv[]) {
     std::string outputFile;
-    // Parse command line arguments
+    std::string inputFile;
+    
+    // Parse command-line arguments
     for (int i = 1; i < argc; ++i) {
         std::string arg = argv[i];
         if (arg == "-o" && i + 1 < argc) {
             outputFile = argv[i + 1];
             ++i;  // Skip the next argument since it's the file name
         }
+        if (arg == "-i" && i + 1 < argc) {
+            inputFile = argv[i + 1];
+            ++i;  // Skip the next argument since it's the file name
+        }
     }
 
     octal editor;
-    editor.start(outputFile);  // Start the editor with the specified output file
+    editor.start(outputFile, inputFile);  // Start the editor with the specified output file and input file (if any)
     return 0;
 }
