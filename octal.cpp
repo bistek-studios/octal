@@ -178,6 +178,10 @@ int main(int argc, char* argv[]) {
             inputFile = argv[i + 1];
             ++i;  // Skip the next argument since it's the file name
         }
+        if (arg == "--help" || arg == "-h") {
+            std::cout << "Usage: octal [-i <input_file>] [-o <output_file>] [-h, --help] \n";
+            return 0;
+        }
     }
 
     octal editor;
