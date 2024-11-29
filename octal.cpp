@@ -125,7 +125,7 @@ private:
     std::string outputFile;
 
     void saveToFile(const std::string& fileName, const std::vector<std::string>& lines) {
-        if (outputFile.empty()) {
+        if (outputFile == "") {
             std::cout << "Error: No output file specified using '-o' flag.\n";
         } else {
             std::ofstream outFile(fileName);
