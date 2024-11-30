@@ -24,7 +24,7 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    octal editor("1.3");
+    octal editor("1.4");
     editor.start(inputFile);  // Start the editor with the specified input file (if any)
     return 0;
 }

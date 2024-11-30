@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+make linux
+sudo mv build/linux/octal /usr/local/bin/octal

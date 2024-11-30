@@ -1,3 +1,9 @@
-run this command to install octal (it's a moderately lengthy one chat)
+# for linux
+run this command to install octal (it's a moderately short one chat)
 
-`make && sudo mv ./octal /usr/local/bin/octal`
+if you dont like building stuff from source, the binaries are included on the release page
+
+`./install`
+
+# for windows
+simply download the exe binary from the release page (i'll make an installer later chat)

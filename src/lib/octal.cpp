@@ -1,4 +1,6 @@
 #include "octal.hpp"
+#include "colors.hpp"
+#include <string>
 
 octal::octal(std::string version = "?.x") {
     this->version = version;
@@ -9,7 +11,7 @@ void octal::start(std::string& inputFile) {
     std::string line;
     std::vector<std::string> lines;
 
-    std::cout << "octal v" << version << " Type ':h' for help.\n";
+    std::cout << Color::BLUE << "octal v" << version << Color::YELLOW << "\nType ':h' for help.\n" << Color::RESET;
 
     // Load the input file if specified
     if (!inputFile.empty()) {
@@ -17,7 +19,7 @@ void octal::start(std::string& inputFile) {
     }
 
     while (running) {
-        std::cout << "line " << cursor + 1 << " > ";
+        std::cout << "line " << Color::GREEN << cursor + 1 << Color::RESET << " > ";
         std::getline(std::cin, line);
 
         // Check if user wants to quit without saving
@@ -149,7 +151,7 @@ void octal::saveToFile(const std::string& fileName, const std::vector<std::strin
 void octal::printBuffer(std::vector<std::string> lines) {
     int index = 0;
     std::for_each(lines.begin(), lines.end(), [&index](const std::string& l) {
-        std::cout << index + 1 << " | " << l << "\n";
+        std::cout << Color::GREEN << index + 1 << Color::RESET << " | " << l << "\n";
         ++index;
     });
 }
