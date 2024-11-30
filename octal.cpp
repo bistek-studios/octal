@@ -12,7 +12,7 @@ public:
         std::string line;
         std::vector<std::string> lines;
 
-        std::cout << "octal v1.1 Type ':h' for help.\n";
+        std::cout << "octal v1.2 Type ':h' for help.\n";
 
         // Load the input file if specified
         if (!inputFile.empty()) {
