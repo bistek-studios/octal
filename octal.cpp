@@ -7,8 +7,7 @@
 
 class octal {
 public:
-    void start(const std::string& outputFil, const std::string& inputFile) {
-        outputFile = outputFil;
+    void start(std::string& inputFile) {
         running = true;
         std::string line;
         std::vector<std::string> lines;
@@ -29,22 +28,39 @@ public:
                 running = false;
             } 
             // Check if user wants to quit and save to file
-            else if (line == command_save_exit) {
-                saveToFile(outputFile, lines);  // Save buffer to file
+            else if (line.rfind(command_save_exit, 0) == 0) {
+                std::string str = line.substr(command_save_exit.length()); // Remove ":d" prefix and convert the rest
+                str = trim(str);
+                if (str.empty()) {
+                    str = inputFile;
+                }
+                saveToFile(str, lines);  // Save buffer to file
                 std::cout << "\nYour text:\n";
                 printBuffer(lines);
                 running = false;  // Exit after saving
             } 
+            else if (line.rfind(command_save, 0) == 0) {
+                std::string str = line.substr(command_save.length()); // Remove ":d" prefix and convert the rest
+                str = trim(str);
+                if (str.empty()) {
+                    str = inputFile;
+                }
+                saveToFile(str, lines);  // Save buffer to file
+                std::cout << "\nYour text:\n";
+                printBuffer(lines);
+            } 
             // Check if user wants help
             else if (line == command_help) {
                 std::cout << ":q! to quit\n";
-                std::cout << ":wq! to quit and save to the file\n";
+                std::cout << ":w [<file>] to save file buffer to output file, input file if not specified\n";
+                std::cout << ":wq! [<file>] to quit and save to the set output file, input file if not specified\n";
                 std::cout << ":h to get list of all commands\n";
                 std::cout << ":m <line_number> to move the cursor to a specific line\n";
                 std::cout << ":d <line_number> to delete a specific line\n";
                 std::cout << ":o <line_number> to print a specific line\n";
                 std::cout << ":l to check the length of the buffer\n";
                 std::cout << ":p to print the buffer\n";
+                std::cout << ":e <filename> to load a file into the buffer\n";
             }
             // Check for the :m command (move cursor)
             else if (line.rfind(command_move, 0) == 0) { // If the command starts with ":m"
@@ -97,6 +113,12 @@ public:
                 printBuffer(lines);
                 std::cout << "\n";
             }
+            else if (line.rfind(command_load, 0) == 0) {
+                std::string str = line.substr(command_load.length()); // Remove ":d" prefix and convert the rest
+                str = trim(str);
+                loadFromFile(str,lines);
+                inputFile = str;
+            }
             // Otherwise, add or replace the line at the cursor position
             else {
                 // If the cursor is within the current range, replace the line at that position
@@ -118,18 +140,18 @@ private:
     int cursor = 0;  // Cursor position (zero-indexed)
     std::string command_exit = ":q!";       // Quit without saving
     std::string command_save_exit = ":wq!"; // Quit and save to file
+    std::string command_save = ":w";
     std::string command_help = ":h";
     std::string command_move = ":m";
     std::string command_delete = ":d";  // Command for deleting a line
     std::string command_print = ":o";   // Command for printing a specific line
     std::string command_length = ":l";
     std::string command_preview = ":p";
-
-    std::string outputFile;
+    std::string command_load = ":e";
 
     void saveToFile(const std::string& fileName, const std::vector<std::string>& lines) {
-        if (outputFile == "") {
-            std::cout << "Error: No output file specified using '-o' flag.\n";
+        if (fileName.empty()) {
+            std::cout << "Error: No output file specified.\n";
         } else {
             std::ofstream outFile(fileName);
             if (outFile.is_open()) {
@@ -169,30 +191,31 @@ private:
         printBuffer(lines);
         std::cout << "\n";
     }
+
+    std::string trim(const std::string& str) { 
+        return str.empty() ? str : str.substr(str.find_first_not_of(" \t\n\r"), (str.find_last_not_of(" \t\n\r") - str.find_first_not_of(" \t\n\r") + 1)); 
+    }
+
 };
 
 int main(int argc, char* argv[]) {
-    std::string outputFile;
     std::string inputFile;
-    
+
+    int i;
     // Parse command-line arguments
-    for (int i = 1; i < argc; ++i) {
+    for (i = 1; i < argc; ++i) {
         std::string arg = argv[i];
-        if (arg == "-o" && i + 1 < argc) {
-            outputFile = argv[i + 1];
-            ++i;  // Skip the next argument since it's the file name
-        }
-        if (arg == "-i" && i + 1 < argc) {
-            inputFile = argv[i + 1];
-            ++i;  // Skip the next argument since it's the file name
-        }
         if (arg == "--help" || arg == "-h") {
-            std::cout << "Usage: octal [-i <input_file>] [-o <output_file>] [-h, --help] \n";
+            std::cout << "Usage: octal [OPTIONS] [<input_file>]  \n";
+            std::cout << "-h, --help - usage of command\n";
             return 0;
+        }
+        else { // must be input file
+            inputFile = argv[i];
         }
     }
 
     octal editor;
-    editor.start(outputFile, inputFile);  // Start the editor with the specified output file and input file (if any)
+    editor.start(inputFile);  // Start the editor with the specified input file (if any)
     return 0;
 }
